@@ -23,6 +23,9 @@ We will create an extension, using which a user will be able to
 
 Once a user uploads the dubbed audio, the server will store the audio and save the metadata like langauge, date recorded, username of the recording user, etc. in the database. And retrieve the same when needed 
 
+![workflow_2 drawio](https://user-images.githubusercontent.com/62426177/201355015-b42932dd-b42a-44de-a5e2-114aa97be2f6.png)
+
+
 _Still one question remains - How to identify genuine dubbing?_<br>
 We can ask the user for rating once the audio dubbing has ended and based on that we can rank the audio dubbings.
 
