@@ -8,8 +8,19 @@
         "48":"/images/48.png",
         "128":"/images/128.png"
     },
+    "permissions": ["storage", "tabs", "activeTab","unlimitedStorage"],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+          "matches": ["https://*.youtube.com/*"],
+          "css": ["content.css"],
+          "js": ["content.js"]
+        }
+      ],
     "action":{
-        "default_popup":"index.html"
+        "default_popup":"index.html",
+        "default_title": "Video Dubbing Tool"
     }
-
 }

@@ -1,18 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Video dubbing tool</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>language</h1>
-    <p>select video language</p>
-    <button id="english">english</button><br>
-    <button id="hindi">hindi</button>
-    
-    
-</body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="yt">
+      Video URL :
+      <input type="text" disabled name="video_url" id="video_url" /> <br />
+      Dub Language : <input type="text" name="lang" id="lang" /> <br />
+      <button
+        class="bg-transparent border btn record-button rounded-circle shadow-sm text-center"
+        id="recordButton"
+      >
+        &#127908;
+      </button>
+      <div id="recordedAudioContainer">
+        <button class="btn btn-success rounded-pill" id="saveButton">
+          Save
+        </button>
+        <button class="btn btn-danger rounded-pill" id="discardButton">
+          Discard
+        </button>
+      </div>
+      <h1>language</h1>
+      <p>select video language</p>
+      <button id="english">english</button><br />
+      <button id="hindi">hindi</button>
+    </div>
+    <div id="non-yt">YouTube video page not opened.</div>
+    <div id="dummy"></div>
+
+    <script type="text/javascript" src="index.js"></script>
+  </body>
 </html>
