@@ -1,5 +1,5 @@
 from deta import Deta
-from fastapi import FastAPI, File, UploadFile, Header, Response, Request
+from fastapi import FastAPI, File, UploadFile, Header, Response, Request, WebSocket
 from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse
 from config import Settings
 
@@ -11,31 +11,57 @@ deta = Deta(env.DETA_KEY)  # configure your Deta project
 drive = deta.Drive("dubs") # access to your drive
 CHUNK_SIZE = 1024 * 512
 
+file = ""
+
 @app.get("/", response_class=HTMLResponse)
 def render():
-    return """
-    <form action="/upload" enctype="multipart/form-data" method="post">
-        <input name="file" type="file">
-        <input type="submit">
-    </form>
+    return FileResponse("public/index.html")
 
-    <audio width="320" height="240" controls>
-  <source src="/download/music.mp3" type="audio/mp3">
-Your browser does not support the audio tag.
-</video>
-    """
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    file = open("tmp", "wb+")
+    while True:
+        try :
+            data = await websocket.receive_bytes()
+            file.write(data)
+            print(f"Message text was: {len(data)}")
+            if(len(data)):
+                await websocket.send_text(f"ok")    
+        except :
+            print("closing file & connection")
+            file.close()
+            break
+
+
+@app.websocket("/data")
+async def websocket_endpoint2(websocket: WebSocket):
+    data = {'name' : "music.mp3"}
+    await websocket.accept()
+    while True:
+        try :
+            data = await websocket.receive_json()
+            print(f"Message text was: {data}")   
+            await websocket.send_text(f"ok")
+        except:
+            break
+    file = open("tmp", "rb")
+    res = drive.put(data['name'], file)
+    print("Result - ", res)         
+
 
 @app.post("/upload")
-def upload_img(file: UploadFile = File(...)):
+def upload_file(file: UploadFile = File(...)):
     name = file.filename
     f = file.file
+    print(f)
     res = drive.put(name, f)
     return res
 
 @app.get("/download/{name}")
 def download_img(name: str):
     res = drive.get(name)
-    return StreamingResponse(res.iter_chunks(1024), media_type="video/mp4")
+    return StreamingResponse(res.iter_chunks(1024), media_type="audio/mp4")
 
 
 def chunk_generator_from_stream(stream, chunk_size, start, size):
@@ -51,19 +77,19 @@ def chunk_generator_from_stream(stream, chunk_size, start, size):
 
     stream.close()
 
-@app.get("/video")
-async def video_endpoint(range: str = Header(None)):
+@app.get("/audio/{name}")
+async def audio_endpoint(name: str, range: str = Header(None)):
     start, end = range.replace("bytes=", "").split("-")
-    video = drive.get("music.mp3")
-    filesize = len(video.read())
+    audio = drive.get(name)
+    filesize = len(audio.read())
     start = int(start)
     end = min(filesize,start + CHUNK_SIZE)
     
     print("Running......")
 
-    video = drive.get("music.mp3")
+    audio = drive.get("music.mp3")
     chunk_generator = chunk_generator_from_stream(
-        video,
+        audio,
         chunk_size=CHUNK_SIZE,
         start=start,
         size=CHUNK_SIZE

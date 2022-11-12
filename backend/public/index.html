@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form
+      action="/upload"
+      id="upload"
+      enctype="multipart/form-data"
+      method="post"
+    >
+      <input type="text" name="data" />
+      <input name="file" type="file" />
+      <input type="submit" />
+    </form>
+
+    <audio width="320" height="240" controls>
+      <source src="/audio/music.mp3" type="audio/mp3" />
+      Your browser does not support the audio tag.
+    </audio>
+    <script>
+      let uploaded = false;
+
+      function FileSlicer(file) {
+        this.sliceSize = 1024 * 1024;
+        this.slices = Math.ceil(file.size / this.sliceSize);
+
+        this.currentSlice = 0;
+
+        this.getNextSlice = function () {
+          var start = this.currentSlice * this.sliceSize;
+          var end = Math.min(
+            (this.currentSlice + 1) * this.sliceSize,
+            file.size
+          );
+          ++this.currentSlice;
+
+          return file.slice(start, end);
+        };
+      }
+
+      function Sender(url, data) {
+        var socket = new WebSocket(url);
+
+        socket.onopen = function () {
+          socket.send(JSON.stringify(data));
+        };
+        socket.onmessage = function (ms) {
+          console.log("Meesage received : ", ms);
+          if (ms.data == "ok") {
+            console.log("Saved the data");
+            socket.close();
+          } else {
+            console.log("Error occurred");
+          }
+        };
+        socket.onerror = function () {
+          console.log("Unable to connect to socket");
+        };
+
+        socket.onclose = function () {
+          console.log("Saved the data");
+        };
+        return false;
+      }
+
+      function Uploader(url, file, data) {
+        var fs = new FileSlicer(file);
+        var socket = new WebSocket(url);
+
+        console.log("Upload ", socket, fs, url);
+
+        socket.onopen = function () {
+          socket.send(fs.getNextSlice());
+        };
+        socket.onmessage = function (ms) {
+          console.log("Meesage received : ", ms);
+          if (ms.data == "ok") {
+            fs.slices--;
+            if (fs.slices > 0) socket.send(fs.getNextSlice());
+            else {
+              console.log("Upload complete");
+              socket.close();
+            }
+          } else {
+            console.log("Error occurred");
+          }
+        };
+        socket.onerror = function () {
+          console.log("Unable to connect to socket");
+        };
+
+        socket.onclose = function () {
+          if (fs.slices) console.log("Unable to upload");
+          else Sender("ws://localhost:8000/data", data);
+        };
+        return false;
+      }
+
+      const form = document.getElementById("upload");
+      form.addEventListener("submit", (e) => {
+        uploaded = false;
+        const form = e.target;
+        const file = e.target[1];
+        console.log(file, file.files[0]);
+        Uploader("ws://localhost:8000/ws", file.files[0], {
+          name: file.files[0].name,
+          data: e.target[0].value,
+        });
+        e.preventDefault();
+      });
+    </script>
+  </body>
+</html>
