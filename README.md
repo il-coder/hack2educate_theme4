@@ -16,7 +16,7 @@ Mayank Goswami <br>
 Shashikant Rajput <br>
 **Discord** : t33#9261
 
-> `Backend API test URL : https://ilcoder.biz`
+> Backend API test URL : https://ilcoder.biz
 
 ## How we will solve the problem? :thinking:
 
