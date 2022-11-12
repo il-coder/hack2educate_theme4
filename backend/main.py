@@ -1,6 +1,7 @@
 from deta import Deta
 from fastapi import FastAPI, File, UploadFile, Header, WebSocket
 from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from config import Settings
 
 from models import Mapping
@@ -8,6 +9,14 @@ from models import Mapping
 env = Settings()
 
 app = FastAPI()  # notice that the app instance is called `app`, this is very important.
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 deta = Deta(env.DETA_KEY)  # configure your Deta project 
 drive = deta.Drive("dubs") # access to your drive
