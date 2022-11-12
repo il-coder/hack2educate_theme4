@@ -13,16 +13,41 @@
       enctype="multipart/form-data"
       method="post"
     >
-      <input type="text" name="data" />
-      <input name="file" type="file" />
+      <input type="text" name="video_url" placeholder="Video URL" /> <br />
+      <input type="text" name="lang" placeholder="Dubbing Language" /> <br />
+      <input name="file" type="file" /> <br />
       <input type="submit" />
     </form>
-
-    <audio width="320" height="240" controls>
-      <source src="/audio/music.mp3" type="audio/mp3" />
+    <br /><br />
+    <!-- <audio width="320" height="240" controls>
+      <source src="/audio/music1.mp3" type="audio/mp3" />
       Your browser does not support the audio tag.
-    </audio>
+    </audio> -->
+    <div>
+      <input tpye="text" id="url" placeholder="Video URL" />
+      <button onclick="fetchAudio()">Fetch</button>
+    </div>
+    <div id="data"></div>
     <script>
+      async function fetchAudio() {
+        fetch(`/list?url=${document.getElementById("url").value}`, {
+          method: "GET",
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            document.getElementById("data").innerHTML = "";
+            res.forEach((element) => {
+              document.getElementById(
+                "data"
+              ).innerHTML += `${element.lang} <audio width="320" height="240" controls>
+        <source src="/audio/${element.audio_url}" type="audio/mp3" />
+        Your browser does not support the audio tag.
+      </audio> <br>`;
+            });
+          });
+      }
+
       let uploaded = false;
 
       function FileSlicer(file) {
@@ -105,11 +130,12 @@
       form.addEventListener("submit", (e) => {
         uploaded = false;
         const form = e.target;
-        const file = e.target[1];
+        const file = e.target[2];
         console.log(file, file.files[0]);
         Uploader("ws://localhost:8000/ws", file.files[0], {
           name: file.files[0].name,
-          data: e.target[0].value,
+          video_url: e.target[0].value,
+          lang: e.target[1].value,
         });
         e.preventDefault();
       });

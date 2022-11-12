@@ -1,7 +1,9 @@
 from deta import Deta
-from fastapi import FastAPI, File, UploadFile, Header, Response, Request, WebSocket
-from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse
+from fastapi import FastAPI, File, UploadFile, Header, WebSocket
+from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse, JSONResponse
 from config import Settings
+
+from models import Mapping
 
 env = Settings()
 
@@ -10,6 +12,29 @@ app = FastAPI()  # notice that the app instance is called `app`, this is very im
 deta = Deta(env.DETA_KEY)  # configure your Deta project 
 drive = deta.Drive("dubs") # access to your drive
 CHUNK_SIZE = 1024 * 512
+
+import os
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy_cockroachdb import run_transaction
+import uuid
+
+
+engine = create_engine(env.DATABASE_URL)
+conn = engine.connect()
+
+res = conn.execute(text("SELECT now()")).fetchall()
+print("My res = ",res)
+
+def create_mapping(session, e):
+    session.add(e)
+
+def fetch_records(session, e):
+    res = session.query(Mapping).filter(Mapping.video_url == e).all()
+    arr = []
+    for e in res:
+        arr.append({'video_url': e.video_url, 'audio_url': e.audio_url, 'lang': e.lang})
+    return arr
 
 file = ""
 
@@ -48,6 +73,9 @@ async def websocket_endpoint2(websocket: WebSocket):
     file = open("tmp", "rb")
     res = drive.put(data['name'], file)
     print("Result - ", res)         
+    e = Mapping(id=uuid.uuid4(), video_url=data['video_url'], audio_url=res, lang=data['lang'])
+    run_transaction(sessionmaker(conn), lambda s: create_mapping(s,e))
+
 
 
 @app.post("/upload")
@@ -77,6 +105,12 @@ def chunk_generator_from_stream(stream, chunk_size, start, size):
 
     stream.close()
 
+@app.get("/list")
+async def list_items(url: str) :
+    res = run_transaction(sessionmaker(conn), lambda s: fetch_records(s, url))
+    print(res)
+    return JSONResponse(res)
+
 @app.get("/audio/{name}")
 async def audio_endpoint(name: str, range: str = Header(None)):
     start, end = range.replace("bytes=", "").split("-")
@@ -87,7 +121,7 @@ async def audio_endpoint(name: str, range: str = Header(None)):
     
     print("Running......")
 
-    audio = drive.get("music.mp3")
+    audio = drive.get(name)
     chunk_generator = chunk_generator_from_stream(
         audio,
         chunk_size=CHUNK_SIZE,
