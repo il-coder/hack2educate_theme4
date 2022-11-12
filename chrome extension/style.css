@@ -1,0 +1,15 @@
+html{
+    min-height: 60px;
+    min-width: 200px;
+}
+body{
+    background-color:black;
+
+}
+h1{
+    color: white;
+}
+p{
+    size: 18px;
+    color: white;
+}
