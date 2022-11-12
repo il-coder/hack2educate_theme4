@@ -21,9 +21,9 @@ We will create an extension, using which a user will be able to
 1. Give it's own translation for any particular video for any part of it in any language of his/her choice which will be stored on the server
 2. Choose a translation/dubbed audio to play instead of original audio out of available ones which is retrieved from the server
 
-Once a user uploads the dubbed audio, the server will store the audio and save the metadata like langauge, date recorded, username of the recording user, etc. in the database. And retrieve the same when needed 
+Once a user uploads the dubbed audio, the server will store the audio and save the metadata like language, date recorded, username of the recording user, etc. in the database. And retrieve the same when needed 
 
-![workflow_2 drawio](https://user-images.githubusercontent.com/62426177/201355015-b42932dd-b42a-44de-a5e2-114aa97be2f6.png)
+![workflow_2 drawio](https://user-images.githubusercontent.com/62426177/201458660-e5253cec-baf4-44b9-9ec3-355331664380.png)
 
 
 _Still one question remains - How to identify genuine dubbing?_<br>
@@ -45,6 +45,16 @@ The user will open a YouTube video and extension will become active. When user c
 
 3. We can also provide automatic translations using auto generated translations for captions by YouTube (though not all videos will have it)
 
+### Tools & Technologies to be used
+* HTML
+* CSS
+* JavaScript
+* Chrome Extension
+* Python 3.9
+* FastAPI
+* Cockroach DB
+* Deta Drive SDK
+* VS Code
 
 
 
