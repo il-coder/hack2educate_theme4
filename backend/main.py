@@ -20,7 +20,7 @@ app.add_middleware(
 
 deta = Deta(env.DETA_KEY)  # configure your Deta project 
 drive = deta.Drive("dubs") # access to your drive
-CHUNK_SIZE = 1024 * 512
+CHUNK_SIZE_GLOBAL = 1024 * 512
 
 import os
 from sqlalchemy import create_engine, text
@@ -125,24 +125,31 @@ async def audio_endpoint(name: str, range: str = Header(None)):
     start, end = range.replace("bytes=", "").split("-")
     audio = drive.get(name)
     filesize = len(audio.read())
+
+    CHUNK_SIZE = CHUNK_SIZE_GLOBAL
+
+    if CHUNK_SIZE >= filesize :
+        CHUNK_SIZE = filesize // 5
+
     start = int(start)
     end = min(filesize,start + CHUNK_SIZE)
-    
+
     print("Running......")
+
 
     audio = drive.get(name)
     chunk_generator = chunk_generator_from_stream(
         audio,
         chunk_size=CHUNK_SIZE,
         start=start,
-        size=CHUNK_SIZE
+        size=filesize
     )
     return StreamingResponse(
         chunk_generator,
         headers={
             "Accept-Ranges": "bytes",
             "Content-Range": f"bytes {start}-{end}/{filesize}",
-            "Content-Type": "audio/mp3"
+            "Content-Type": "audio"
         },
         status_code=206
     )

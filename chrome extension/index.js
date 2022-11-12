@@ -1,4 +1,8 @@
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  function setAudio(url) {
+    chrome.tabs.sendMessage(tabs[0].id, { action: "set_audio", audio: url });
+  }
+
   function fetchData() {
     fetch(
       `https://ilcoder.biz/list?url=${
@@ -11,15 +15,21 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
-        document.getElementById("dummy").innerHTML = "";
+        document.getElementById(
+          "dummy"
+        ).innerHTML = `<button class="lang-btn" data="null">Original</button> <br>`;
         res.forEach((element) => {
           document.getElementById(
             "dummy"
-          ).innerHTML += `${element.lang} <audio width="320" height="240" controls id="${element.audio_url}">
-        <source src="https://ilcoder.biz/audio/${element.audio_url}" type="audio/mp3"/>
-        Your browser does not support the audio tag.
-      </audio> <br>`;
+          ).innerHTML += `<button class="lang-btn" data="${element.audio_url}">${element.lang}</button><br>`;
         });
+
+        const btns = document.getElementsByClassName("lang-btn");
+        for (let i = 0; i < btns.length; i++) {
+          btns[i].addEventListener("click", () => {
+            setAudio(btns[i].getAttribute("data"));
+          });
+        }
       });
   }
 
@@ -96,6 +106,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         socket.onmessage = function (ms) {
           console.log("Message received : ", ms);
           if (ms.data == "ok") {
+            alert("Recording saved successfully");
             console.log("Saved the data");
             socket.close();
           } else {
@@ -145,10 +156,10 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         return false;
       }
 
-      let f = new File([audioBlob], Date.now().toString() + ".mp3", {
-        type: "audio/mp3",
+      let f = new File([audioBlob], Date.now().toString() + ".webm", {
+        type: "audio/webm",
       });
-      downloadBlob(audioBlob);
+      //   downloadBlob(audioBlob);
       //   downloadBlob(f);
       console.log(f);
       Uploader("wss://hack2educate.herokuapp.com/ws", f, {
