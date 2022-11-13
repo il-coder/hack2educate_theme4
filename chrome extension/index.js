@@ -7,17 +7,17 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     let body =
       "New Recording saved for " + document.getElementById("video_url").value;
 
+    const TWILIO_ACCOUNT_SID = "";
+    const TWILIO_AUTH_TOKEN = "";
+
     fetch(
-      "https://api.twilio.com/2010-04-01/Accounts/AC2e11009232290325e5e37cb430c2620f/Messages.json",
+      `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization:
-            "Basic " +
-            btoa(
-              "AC2e11009232290325e5e37cb430c2620f:219e82e5534654dc000c5476e16a9997"
-            ),
+            "Basic " + btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`),
         },
         body: `Body=${body}&From=+18623664423&To=+917011189570`,
       }
