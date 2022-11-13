@@ -95,4 +95,6 @@ The user will open a YouTube video and extension will become active. When user c
 
 2. We can add incentives & support to the person doing dubbing task
 
-3. We can also provide automatic translations using auto generated translations for captions by YouTube (though not all videos will have it)
+3. Right now, only whole video dub / dub from starting is available. As a future scope, dubbing in parts and auto-syncing will be made possible using timestamps at which audio are recorded.
+
+4. We can also provide automatic translations using auto generated translations for captions by YouTube (though not all videos have captions, so not all videos will be translated using it)

@@ -52,6 +52,32 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     return a;
   }
 
+  function setRecording(val) {
+    chrome.storage.sync.set({ isRecording: val }, function () {
+      console.log("Value is set to " + val);
+    });
+  }
+
+  function setAudioBlob(val) {
+    localStorage.setItem("audioBlob", val);
+  }
+
+  function showActions(audioBlob) {
+    //create a new audio element that will hold the recorded audio
+    const audioElm = document.createElement("audio");
+    audioElm.setAttribute("controls", ""); //add controls
+    const audioURL = window.URL.createObjectURL(audioBlob);
+    audioElm.src = audioURL;
+
+    recordedAudioContainer.style.display = "block";
+
+    //show audio
+    recordedAudioContainer.insertBefore(
+      audioElm,
+      recordedAudioContainer.firstElementChild
+    );
+  }
+
   function initRecordSetup() {
     let audioBlob = null;
     let isRecording = false;
@@ -62,6 +88,20 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const recordedAudioContainer = document.getElementById(
       "recordedAudioContainer"
     );
+
+    audioBlob = localStorage.getItem("audioBlob");
+    if (audioBlob) {
+      audioBlob = generateBlob(audioBlob);
+      console.log(audioBlob);
+
+      showActions(audioBlob);
+    }
+
+    chrome.storage.sync.get(["isRecording"], function (result) {
+      console.log("Value currently is " + result.isRecording);
+      isRecording = result.isRecording || false;
+      recordButton.innerHTML = isRecording ? "Stop" : "&#127908;";
+    });
 
     // ------------------ Discard Recording --------------------
     function discardRecording() {
@@ -74,6 +114,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         recordedAudioContainer.firstElementChild.remove();
       }
       audioBlob = null;
+      setAudioBlob("");
+      recordedAudioContainer.style.display = "none";
     }
     discardAudioButton.addEventListener("click", discardRecording);
 
@@ -193,6 +235,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           } else {
             isRecording = false;
           }
+          setRecording(isRecording);
           recordButton.innerHTML = isRecording ? "Stop" : "&#127908;";
         }
       );
@@ -206,24 +249,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         function (response) {
           console.log("Got response on stop ");
           isRecording = false;
+          setRecording(isRecording);
           recordButton.innerHTML = "&#127908;";
 
           if (recordedAudioContainer.firstElementChild.tagName === "AUDIO") {
             recordedAudioContainer.firstElementChild.remove();
           }
+
+          setAudioBlob(response);
+
           audioBlob = generateBlob(response);
           console.log(audioBlob);
 
-          //create a new audio element that will hold the recorded audio
-          const audioElm = document.createElement("audio");
-          audioElm.setAttribute("controls", ""); //add controls
-          const audioURL = window.URL.createObjectURL(audioBlob);
-          audioElm.src = audioURL;
-          //show audio
-          recordedAudioContainer.insertBefore(
-            audioElm,
-            recordedAudioContainer.firstElementChild
-          );
+          showActions(audioBlob);
         }
       );
     }
