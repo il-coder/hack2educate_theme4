@@ -17,11 +17,11 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         console.log(res);
         document.getElementById(
           "dummy"
-        ).innerHTML = `<button class="lang-btn" data="null">Original</button> <br>`;
+        ).innerHTML = `<button class="lang-btn" data="null">Original</button>`;
         res.forEach((element) => {
           document.getElementById(
             "dummy"
-          ).innerHTML += `<button class="lang-btn" data="${element.audio_url}">${element.lang}</button><br>`;
+          ).innerHTML += `<button class="lang-btn" data="${element.audio_url}">${element.lang}</button>`;
         });
 
         const btns = document.getElementsByClassName("lang-btn");
@@ -66,6 +66,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     //create a new audio element that will hold the recorded audio
     const audioElm = document.createElement("audio");
     audioElm.setAttribute("controls", ""); //add controls
+    audioElm.setAttribute("controlsList", "nodownload"); //remove download option
     const audioURL = window.URL.createObjectURL(audioBlob);
     audioElm.src = audioURL;
 
