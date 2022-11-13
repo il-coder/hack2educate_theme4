@@ -98,3 +98,13 @@ The user will open a YouTube video and extension will become active. When user c
 3. Right now, only whole video dub / dub from starting is available. As a future scope, dubbing in parts and auto-syncing will be made possible using timestamps at which audio are recorded.
 
 4. We can also provide automatic translations using auto generated translations for captions by YouTube (though not all videos have captions, so not all videos will be translated using it)
+
+### Plan to Work on Auto Sync of Audio & Video when dubbing is in part of the video
+
+> Get timestamp at beginning of recording & store it along with recording file and duration
+
+> Sync Time : <br>
+> If new audio is available at current timestamp, prompt user to continue current or select a new one<br>
+> Also make an option, to always continue current audio dubbing, if it is available for current time
+
+![Workflow_3 drawio](https://user-images.githubusercontent.com/62426177/201509487-8bc829b0-46e0-4726-bfec-1d3dfdf579a5.png)
