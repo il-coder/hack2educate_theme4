@@ -3,6 +3,27 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, { action: "set_audio", audio: url });
   }
 
+  function sendSMS() {
+    let body =
+      "New Recording saved for " + document.getElementById("video_url").value;
+
+    fetch(
+      "https://api.twilio.com/2010-04-01/Accounts/AC2e11009232290325e5e37cb430c2620f/Messages.json",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization:
+            "Basic " +
+            btoa(
+              "AC2e11009232290325e5e37cb430c2620f:219e82e5534654dc000c5476e16a9997"
+            ),
+        },
+        body: `Body=${body}&From=+18623664423&To=+917011189570`,
+      }
+    );
+  }
+
   function fetchData() {
     fetch(
       `https://ilcoder.biz/list?url=${
@@ -152,6 +173,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             alert("Recording saved successfully");
             console.log("Saved the data");
             socket.close();
+            sendSMS();
           } else {
             console.log("Error occurred");
           }

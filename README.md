@@ -48,6 +48,7 @@ Note :- Don't click anywhere else otherwise the recording will be lost.
 - Cockroach DB
 - Deta Drive SDK
 - VS Code
+- Twilio API
 
 ### Progress Chart
 
@@ -58,11 +59,12 @@ Note :- Don't click anywhere else otherwise the recording will be lost.
 5. Linked Custom Domain (https://ilcoder.biz) to backend hosting service ✅
 6. Hosted on Heroku for Websocket Support ✅
 7. Adding functionalities to the extension ✅
+8. Notification for new dubbing added ✅
+9. Beautification of extension UI ✅
 
 ### Work in Progress
 
 - Automatic conversion of audio using Speech Recognition
-- Beautification of extension UI
 
 ## How we will solve the problem? :thinking:
 
