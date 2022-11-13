@@ -3,15 +3,23 @@ html{
     min-width: 300px;
 }
 body{
-    background-color:black;
-    color : white;
+    /* background-color:black;
+    color : white; */
+    background:rgb(50, 233, 166);
+    color :black;
+    color: #e5f80f;
+    font-size: 16px;
+    /* width: 100%; */
 }
 h1{
     color: white;
+    color: #e5f80f;
+    margin-top: 0.3rem;
 }
 p{
     size: 18px;
     color: white;
+    color: #e5f80f;
 }
 
 audio {
@@ -24,4 +32,29 @@ audio {
 #dummy button {
     margin-bottom: 10px;
     margin-right: 10px;
+}
+
+#menu {
+	/* width: 100%; */
+	border-style: solid solid none solid;
+	border-color: #95ba5d;
+	border-width: 1px;
+	padding: 10px;
+    min-height: 100px;
+    background-color: rgb(40,40,40);
+    /* background: url(menu2.gif); */
+    background-size: cover;
+    background-clip: padding-box;
+    background-repeat: no-repeat;
+}
+
+.lang-container {
+    border-top: 2px dashed rgb(200,200,200);
+    margin-top: 20px;
+}
+
+#non-yt {
+    font-size: 16px;
+    line-height: 100px;
+    text-align: center;
 }
