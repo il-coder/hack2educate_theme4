@@ -9,6 +9,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 
     const TWILIO_ACCOUNT_SID = "";
     const TWILIO_AUTH_TOKEN = "";
+    const FROM_NO = "";
+    const TO_NO = "";
 
     fetch(
       `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
@@ -19,7 +21,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           Authorization:
             "Basic " + btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`),
         },
-        body: `Body=${body}&From=+18623664423&To=+917011189570`,
+        body: `Body=${body}&From=${FROM_NO}&To=${TO_NO}`,
       }
     );
   }
