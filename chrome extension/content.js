@@ -122,6 +122,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse(true);
         mediaRecorder = new MediaRecorder(stream);
         mediaRecorder.start();
+        muteOriginal();
         playVideo();
         console.log("Recording started");
         mediaRecorder.ondataavailable = mediaRecorderDataAvailable;

@@ -173,6 +173,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             alert("Recording saved successfully");
             console.log("Saved the data");
             socket.close();
+            audioBlob = null;
+            setAudioBlob("");
+            recordedAudioContainer.style.display = "none";
             sendSMS();
           } else {
             console.log("Error occurred");

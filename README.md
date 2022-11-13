@@ -65,6 +65,7 @@ Note :- Don't click anywhere else otherwise the recording will be lost.
 ### Work in Progress
 
 - Automatic conversion of audio using Speech Recognition
+- Dubbing in part of the video
 
 ## How we will solve the problem? :thinking:
 
